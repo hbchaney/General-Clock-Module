@@ -1,0 +1,19 @@
+Essential Modes: 
+
+Clock_Defualt
+Clock_Set 
+Brightness_toggle
+Alarm_set 
+
+
+Extra Modes: 
+
+Stop_Watch
+Fun_Mode
+Clock_Animated
+
+Mystery Modes: modes to solve puzzle
+
+Fuzzy_Display 
+Puzzle_1 
+Text_Display_Mode

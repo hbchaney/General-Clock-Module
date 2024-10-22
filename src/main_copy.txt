@@ -1,0 +1,46 @@
+#include <Arduino.h>
+#include "Adafruit_ST7789.h"
+#include "Timer.h"
+#include "TimerDisplay.h"
+#include "button.h"
+#include "three_button_manager.h"
+#include "TimerManager.hpp"
+
+//consts
+const uint8_t dc = 9; 
+const uint8_t rst = 10; 
+const uint8_t tc = 11; 
+const int screen_width{320}; 
+const int screen_height{172}; 
+
+//devices
+Adafruit_ST7789 main_disp{tc,dc,rst}; 
+eeprom::EEProm_M24C02 eeprom_main{13,14,15,12,&Wire1}; 
+TimerManager timer_manager{&main_disp,eeprom_main}; 
+ThreeButtonManager input_manager{26,25,24,2000}; 
+
+Input last_in; 
+
+void setup() 
+{ 
+    Serial.begin(); 
+    main_disp.init(screen_height,screen_width); 
+    main_disp.setRotation(3); 
+
+    eeprom_main.setup(); 
+    input_manager.Setup(); 
+    timer_manager.quick_save(); 
+    timer_manager.init(); 
+    main_disp.fillScreen(0x0000);
+}
+
+void loop() 
+{  
+    timer_manager.Update(out); 
+}
+
+void loop2()
+{
+    auto out = input_manager.Update(); 
+    if ()
+}
