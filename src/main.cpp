@@ -11,6 +11,7 @@
 #include "time_set.h"
 #include "clock_time.h"
 #include "time_show.h"
+#include "mode_manager.h"
 
 input::InputManager man{
     9,10,1,0,4
@@ -22,17 +23,20 @@ display::DisplayValues disp_vals{
 display::DisplayManager disp{Wire1};  
 utilities::ClockTime clk_time{1, 1, 1, 1, 1, 2021}; 
 rtc::RTCDS3231 rtc_dev{Wire, clk_time}; 
+SequenceBuzzer buzzie{
+    26, {100,200,200,100}, 150
+}; 
 
-clock_mode::TimeSet time_set {disp, clk_time, rtc_dev}; 
-clock_mode::TimeShow time_show {disp, clk_time, rtc_dev}; 
+clock_mode::ModeManager manager {
+    disp, clk_time, rtc_dev, buzzie, man
+}; 
 
 bool mil_en = false; 
 
 void setup() 
 { 
     rtc_dev.init(); 
-    base_utilities::UpdateBase::run_inits();
-    time_show.enter_mode();  
+    base_utilities::UpdateBase::run_inits();  
 }
 
 void setup1()
@@ -42,10 +46,6 @@ void setup1()
 
 void loop() 
 {   
-    auto out = man.get_input(); 
-    time_show.process_input(out); 
-    time_show.tick(); 
-
 
     base_utilities::UpdateBase::run_updates(); 
 }

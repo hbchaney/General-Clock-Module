@@ -17,17 +17,33 @@ class ModeManager : base_utilities::UpdateBase
     ModeManager(display::DisplayManager& disp_in,
                 utilities::ClockTime& time_in, 
                 rtc::RTCDS3231& rtc_in, 
-                SequenceBuzzer& buzzie); 
+                SequenceBuzzer& buzzie_in, 
+                input::InputManager& input_manager_in); 
 
-
-    void process_input(input::ClockInput in); 
-
+    void update() override; 
+    void init() override; 
     
 
     private:
-    void switch_mode(); 
+    void rotate_mode(); 
 
-    const std::map<ModeIndex, base_utilities::Mode<input::ClockInput, ModeIndex>*> mode_map; 
+
+    void switch_mode(ModeIndex ind); //mode index call back 
+
+
+    display::DisplayManager& disp; 
+    utilities::ClockTime& time;
+    rtc::RTCDS3231& rtc; 
+    SequenceBuzzer& buzzie; 
+    input::InputManager& input_manager; 
+
+    TimeShow time_show; 
+    TimeSet time_set;  
+
+    int loop_count = 0;  
+    base_utilities::Mode<input::ClockInput, ModeIndex>* current_mode; 
+    std::map<ModeIndex, base_utilities::Mode<input::ClockInput, ModeIndex>*> mode_map; 
+    std::vector<ModeIndex> mode_index_loop; 
 }; 
 
 }

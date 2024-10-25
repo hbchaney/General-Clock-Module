@@ -18,7 +18,7 @@ class SequenceBuzzer : base_utilities::UpdateBase
     void stop_buzzing(); 
     bool get_buzzer_status() const; 
 
-    void pulse(ulong pulse_time); 
+    void pulse(ulong pulse_time, uint8_t vol); 
 
     void set_buzzer_vol(uint8_t new_vol);  
 

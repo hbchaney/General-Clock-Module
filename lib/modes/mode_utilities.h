@@ -5,7 +5,7 @@ namespace clock_mode
 
 enum class ModeIndex
 {
-    TimeShow,
+    TimeShow = 0,
     TimeSet, 
     BrightnessSet,
     AlarmSet

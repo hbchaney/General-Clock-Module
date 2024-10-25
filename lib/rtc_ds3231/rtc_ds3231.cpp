@@ -33,13 +33,12 @@ bool RTCDS3231::set_time(uint8_t hours, uint8_t mins, bool is_am, uint8_t day, u
     uint8_t year_out = ((year / 10) % 100) << 4 | (year % 10);  
     LOG_INFO("year being saved : ", year_out); 
 
-    uint8_t seconds_out = 0x0; //set the seconds to zero
+
     uint8_t mins_out = min_single | (min_tenths << 4); 
     uint8_t hours_out = 0b01000000 | !(is_am & 0b1) << 5 | hours_single | static_cast<uint8_t>(hours_tens) << 4; 
 
     wire_ref.beginTransmission(I2C_ADDRESS); 
-    wire_ref.write(SECONDS);  
-    wire_ref.write(seconds_out); 
+    wire_ref.write(MINUTES); 
     wire_ref.write(mins_out); 
     wire_ref.write(hours_out); 
     wire_ref.write(0x1); //garfield hates mondays 

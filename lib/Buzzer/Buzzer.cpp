@@ -76,12 +76,12 @@ void SequenceBuzzer::update()
     }
 }
 
-void SequenceBuzzer::pulse(ulong pulse_time)
+void SequenceBuzzer::pulse(ulong pulse_time, uint8_t vol)
 {
     pulse_start = millis(); 
     pulse_state = true; 
     pulse_length = pulse_time; 
-    analogWrite(pin_no, buzz_vol); 
+    analogWrite(pin_no, vol); 
 }
 
 bool SequenceBuzzer::get_buzzer_status() const
