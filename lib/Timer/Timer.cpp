@@ -1,7 +1,7 @@
 #include "Timer.h"
 #include "DebugLog.h"
 
-Timer::Timer(int no, eeprom::EEProm_M24C02& in_eeprom_dev) : timer_no{no} , eeprom_dev{in_eeprom_dev}
+Timer::Timer(int no, eeprom::EEPromM24C02& in_eeprom_dev) : timer_no{no} , eeprom_dev{in_eeprom_dev}
 {} 
 
 void Timer::init()

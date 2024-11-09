@@ -3,8 +3,7 @@
 using namespace display; 
 
 DisplayManager::DisplayManager(TwoWire& wire_in, uint8_t v_sync_pin_in) : 
-disp{wire_in, v_sync_pin_in}, 
-current_mode{DisplayModes::CLOCK_MODE}
+disp{wire_in, v_sync_pin_in}
 {}
 
 void DisplayManager::init()
@@ -14,137 +13,48 @@ void DisplayManager::init()
 
 void DisplayManager::update()
 {
-    switch (current_mode)
+    update_blinks(); 
+    if (vals_changed)
     {
-        case DisplayModes::CLOCK_MODE: 
-            clock_display();
-            break; 
-        case DisplayModes::YEAR_DATE_MODE: 
-            year_date_display(); 
-            break; 
+        disp.display_lex(current_vals.top, current_vals.bottom); 
     }
 }
 
-void DisplayManager::set_display_mode(DisplayModes mode)
+//if toggled_changed then triggers display to update
+DisplayValues& DisplayManager::get_values(bool toggled_changed)
 {
-    current_mode = mode; 
-}
-
-void DisplayManager::set_clock_display(DisplayValues& vals)
-{
-    current_vals = vals;
-    vals_changed = true;  
-}
-
-void DisplayManager::update_with_time(utilities::ClockTime& clk_time)
-{   
-    current_vals.hour = clk_time.get_hours(); 
-    current_vals.min = clk_time.get_mins();
-    current_vals.day = clk_time.get_days();
-    current_vals.month = clk_time.get_months(); 
-    current_vals.year = clk_time.get_year(); 
-    current_vals.is_am = clk_time.is_am(); 
-    vals_changed = true; 
-}
-
-//1 for blinking 0 for not
-void DisplayManager::update_blink_setting(uint8_t blink_setting)
-{
-    current_vals.blink_setting = blink_setting; 
-    vals_changed = true; 
+    vals_changed = toggled_changed; 
+    return current_vals; 
 }
 
 
-void DisplayManager::clock_display() 
+void DisplayManager::set_values(const DisplayValues& val)
 {
-    if (!vals_changed && !(current_vals.blink_setting & 0b1111))
+    current_vals = val; 
+}
+
+void DisplayManager::update_blinks() 
+{
+    //check to see that blink enabled on top or bottom 
+    if (blink_settings || top_colon_blink || bottom_colon_blink)
     {
-        return; 
-    } 
-    else 
-    {
-        if (blink_start + blink_time < millis() || vals_changed) 
+        if (blink_start + blink_time < millis())
         {
-            blink_status = !blink_status; 
-            if (!vals_changed)
+            vals_changed = true; 
+            blink_start = millis(); 
+            blink_on = !blink_on;
+            if (blink_on) // turn everything on 
             {
-                blink_start = millis(); 
-            }
-            if (blink_status)
-            {
-                disp.display_number(
-                    current_vals.hour,
-                    current_vals.min, 
-                    current_vals.month, 
-                    current_vals.day, 
-                    brightness, 
-                    current_vals.alarm_on, 
-                    0b1111,
-                    !current_vals.is_am
-                ); 
+                current_vals.top.set_on(0x1f); 
+                current_vals.bottom.set_on(0x1f); 
             }
             else 
             {
-                disp.display_number(
-                    current_vals.hour,
-                    current_vals.min, 
-                    current_vals.month, 
-                    current_vals.day, 
-                    brightness, 
-                    current_vals.alarm_on, 
-                    ~current_vals.blink_setting , 
-                    !current_vals.is_am
-                ); 
+                uint8_t top_on = top_colon_blink ? ((~blink_settings) & 0xf) : ((~blink_settings) & 0xf) | 0x10; 
+                uint8_t bottom_on = bottom_colon_blink ? ((~blink_settings >> 4) & 0xf) : ((~blink_settings >> 4) & 0xf) | 0x10; 
+                current_vals.top.set_on(top_on); 
+                current_vals.bottom.set_on(bottom_on); 
             }
-            vals_changed = false; 
         }
     }
 }
-
-void DisplayManager::year_date_display() 
-{
-    if (!vals_changed && !(current_vals.blink_setting & 0b1111))
-    {
-        return; 
-    } 
-    else 
-    {
-        if (blink_start + blink_time < millis() || vals_changed) 
-        {
-            blink_status = !blink_status; 
-            if (!vals_changed)
-            {
-                blink_start = millis(); 
-            }
-            if (blink_status)
-            {
-                disp.display_number(
-                    static_cast<uint8_t>(current_vals.year / 100),
-                    static_cast<uint8_t>(current_vals.year % 100), 
-                    current_vals.month, 
-                    current_vals.day, 
-                    brightness, 
-                    current_vals.alarm_on, 
-                    0b1111
-                ); 
-            }
-            else 
-            {
-                disp.display_number(
-                    static_cast<uint8_t>(current_vals.year / 1000),
-                    static_cast<uint8_t>(current_vals.year % 100), 
-                    current_vals.month, 
-                    current_vals.day, 
-                    brightness, 
-                    current_vals.alarm_on, 
-                    ~current_vals.blink_setting
-                ); 
-            }
-            vals_changed = false; 
-        }
-    }
-}
-
-
-void DisplayManager::alarm_set_display()
-{}

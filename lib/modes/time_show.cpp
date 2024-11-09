@@ -23,7 +23,7 @@ void TimeShow::tick()
     {
         last_update = millis(); 
         rtc_ref.refresh_time(); 
-        disp.update_with_time(time_ref); 
+        update_disp();  
     }
 }
 
@@ -31,12 +31,22 @@ void TimeShow::enter_mode()
 {
     last_update = millis(); 
     rtc_ref.refresh_time(); 
-    disp.update_with_time(time_ref); 
-    disp.update_blink_setting(0b0000); 
-    disp.set_display_mode(display::DisplayModes::CLOCK_MODE); 
+    disp.reset_blink(); 
+    update_disp();  
 }
 
 void TimeShow::exit_mode() 
 {
     //also does nothing for now
+}
+
+void TimeShow::update_disp()
+{
+    auto& vals = disp.get_values(); 
+    vals.top.set_left(time_ref.get_hours()); 
+    vals.top.set_right(time_ref.get_mins(), true); 
+    vals.top.set_colon(display::Lexicon::COLON_NO_DOT); 
+    vals.bottom.set_left(time_ref.get_months()); 
+    vals.bottom.set_right(time_ref.get_days()); 
+    vals.bottom.set_colon(display::Lexicon::COLON_BOTTOM); 
 }

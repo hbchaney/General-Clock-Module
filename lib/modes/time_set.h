@@ -42,6 +42,9 @@ class TimeSet : public base_utilities::Mode<input::ClockInput, ModeIndex>
     void process_select(); 
     void process_inc();
     void process_dec(); 
+    void update_display(); 
+
+    void update_disp(); 
 
     display::DisplayManager& disp; 
     utilities::ClockTime& time_ref; 

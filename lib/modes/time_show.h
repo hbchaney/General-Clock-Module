@@ -24,6 +24,8 @@ class TimeShow : public base_utilities::Mode<input::ClockInput, ModeIndex>
 
     private: 
 
+    void update_disp(); 
+
     display::DisplayManager& disp; 
     utilities::ClockTime& time_ref; 
     rtc::RTCDS3231 rtc_ref; 

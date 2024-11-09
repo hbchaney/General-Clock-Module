@@ -13,7 +13,7 @@ namespace clock_mode
 
 class ModeManager : base_utilities::UpdateBase
 {
-    public: 
+    public:  
     ModeManager(display::DisplayManager& disp_in,
                 utilities::ClockTime& time_in, 
                 rtc::RTCDS3231& rtc_in, 

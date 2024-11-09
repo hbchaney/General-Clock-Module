@@ -39,15 +39,15 @@ void TimeSet::tick()
 
 void TimeSet::exit_mode() 
 {
+    disp.reset_blink(); //just in case
     rtc_ref.set_time(); //sets time with shared clock time ref
 }
 
 void TimeSet::enter_mode() 
 {
     rtc_ref.refresh_time(); //make sure it has the most recent time before starting
-    disp.set_display_mode(display::DisplayModes::CLOCK_MODE); 
-    disp.update_with_time(time_ref); 
-    disp.update_blink_setting(0b0001); 
+    update_disp();  
+    disp.set_blink(0b0001); 
     current_mode = current_set_mode::HOURS; 
 }
 
@@ -68,21 +68,19 @@ void TimeSet::process_select()
     switch (current_mode)
     {
         case current_set_mode::HOURS: 
-            disp.update_blink_setting(0b0001); 
+            disp.set_blink(0b0001); 
             break; 
         case current_set_mode::MINS: 
-            disp.update_blink_setting(0b0010); 
+            disp.set_blink(0b0010); 
             break; 
-        case current_set_mode::YEAR: 
-            disp.set_display_mode(display::DisplayModes::YEAR_DATE_MODE); 
-            disp.update_blink_setting(0b0011); 
+        case current_set_mode::YEAR:  
+            disp.set_blink(0b0011); 
             break; 
         case current_set_mode::MONTHS: 
-            disp.set_display_mode(display::DisplayModes::CLOCK_MODE); 
-            disp.update_blink_setting(0b0100); 
+            disp.set_blink(0b0100); 
             break; 
         case current_set_mode::DAYS: 
-            disp.update_blink_setting(0b1000); 
+            disp.set_blink(0b1000); 
             break; 
         default: 
             LOG_ERROR("current mode set to unknown"); 
@@ -111,7 +109,7 @@ void TimeSet::process_inc()
         default: 
             LOG_ERROR("current mode set to unknown"); 
     }
-    disp.update_with_time(time_ref); 
+    update_disp();  
 }
 
 void TimeSet::process_dec() 
@@ -137,5 +135,29 @@ void TimeSet::process_dec()
             LOG_ERROR("current mode set to unknown"); 
     }
     //special case for year 
-    disp.update_with_time(time_ref); 
+    update_disp();  
+}
+
+
+void TimeSet::update_disp()
+{
+    if (current_mode != current_set_mode::YEAR)
+    {
+        auto& vals = disp.get_values(); 
+        vals.top.set_left(time_ref.get_hours()); 
+        vals.top.set_right(time_ref.get_mins(), true); 
+        vals.top.set_colon(display::Lexicon::COLON_NO_DOT); 
+        vals.bottom.set_left(time_ref.get_months()); 
+        vals.bottom.set_right(time_ref.get_days()); 
+        vals.bottom.set_colon(display::Lexicon::COLON_BOTTOM); 
+    }
+    else 
+    {
+        auto& vals = disp.get_values(); 
+        vals.top = time_ref.get_year(); 
+        vals.top.set_colon(0x0);  
+        vals.bottom.set_left(time_ref.get_months()); 
+        vals.bottom.set_right(time_ref.get_days()); 
+        vals.bottom.set_colon(display::Lexicon::COLON_BOTTOM);
+    }
 }

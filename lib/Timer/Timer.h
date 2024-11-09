@@ -41,7 +41,7 @@ class Timer
     unsigned long pause_time = 0;
     unsigned long start_time = 0; 
     unsigned long time_cache{0}; 
-    eeprom::EEProm_M24C02& eeprom_dev; 
+    eeprom::EEPromM24C02& eeprom_dev; 
 
     ulong finished_start_time{0}; 
     ulong finished_timeout{10000}; 
@@ -64,7 +64,7 @@ class Timer
 
     public: 
     /// @brief Initializes Timer Object
-    Timer(int no, eeprom::EEProm_M24C02&); 
+    Timer(int no, eeprom::EEPromM24C02&); 
     ~Timer(); 
 
     void init(); 

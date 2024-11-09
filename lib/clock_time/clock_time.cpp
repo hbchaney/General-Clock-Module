@@ -1,6 +1,17 @@
 #include "clock_time.h"
 using namespace utilities; 
 
+bool ClockTime::compare_time(const ClockTime& t0, const ClockTime& t1)
+{
+    if (t0.hours == t1.hours && t0.minutes == t1.minutes && t0.am == t1.am)
+    {
+        return true; 
+    }
+    else 
+    {
+        return false;
+    } 
+}
 
 ClockTime::ClockTime(uint8_t in_hours, 
                      uint8_t in_min, 
@@ -29,6 +40,11 @@ ClockTime::ClockTime(uint8_t in_hours,
         day = 1; 
         month = 1; 
     }
+}
+
+ClockTime::ClockTime()
+{
+    ClockTime(1,1,1,1,1,2000); 
 }
 
 void ClockTime::add_time(uint8_t h, uint8_t m)

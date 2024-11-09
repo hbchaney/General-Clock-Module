@@ -9,6 +9,7 @@ namespace utilities
 class ClockTime
 {
     public: 
+    ClockTime(); 
     ClockTime(uint8_t in_hours, 
               uint8_t in_min, 
               bool is_am,
@@ -25,6 +26,8 @@ class ClockTime
     void enable_military(bool status); 
 
     void print_time(); 
+
+    static bool compare_time(const ClockTime& t0, const ClockTime& t1); 
 
     //getters 
     uint8_t get_mins() const; 
