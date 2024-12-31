@@ -1,4 +1,5 @@
 #include "Buzzer.h"
+#include "DebugLog.h"
 
 //WARNING sequence will be made even if not already
 SequenceBuzzer::SequenceBuzzer(uint8_t in_pin_no,
@@ -50,9 +51,7 @@ void SequenceBuzzer::stop_buzzing()
 
 void SequenceBuzzer::update() 
 {
-
-    //check for pulse as well 
-    if (pulse_state && pulse_start + pulse_length < millis()) 
+    if (pulse_state && (pulse_start + pulse_length) < millis()) 
     {
         pulse_state = false; 
         analogWrite(pin_no,0); 
@@ -79,8 +78,9 @@ void SequenceBuzzer::update()
 void SequenceBuzzer::pulse(ulong pulse_time, uint8_t vol)
 {
     pulse_start = millis(); 
-    pulse_state = true; 
     pulse_length = pulse_time; 
+    pulse_state = true;
+
     analogWrite(pin_no, vol); 
 }
 

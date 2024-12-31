@@ -37,6 +37,7 @@ class ClockTime
     uint8_t get_months() const; 
     uint16_t get_year() const; 
     bool is_am() const;  
+    bool is_military() const; 
 
     //setters 
     bool set_time(uint8_t in_hours, uint8_t in_min, bool is_am, uint8_t in_day, uint8_t in_month, uint16_t in_year); 

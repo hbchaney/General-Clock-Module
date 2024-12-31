@@ -35,19 +35,18 @@ class Lexicon
     void set_colon(uint8_t val); 
     void set_dots(uint8_t dot); //only sets last four bits of dot_type_map 
     void set_on(uint8_t on); 
-    //set left two 
     void set_left(uint8_t num, bool zero_pad = false); 
-    //set right two
     void set_right(uint8_t num, bool zero_pad = false); 
 
     uint8_t get_mapped_output(uint8_t ind) const; 
     uint8_t get_colon() const; 
-
+    
+    void set_brightness(uint8_t val); 
     virtual uint8_t get_brightness(uint8_t field) const; 
 
     //1 means uint8_t and 0 means char
 
-    static constexpr uint8_t COLON_BRIGHTNESS = 5; 
+    static constexpr uint8_t COLON_BRIGHTNESS = 4; 
     static constexpr uint8_t ALL_UINT8 = 0b1111; 
     static constexpr uint8_t ALL_CHAR = 0x0; 
 
@@ -100,8 +99,10 @@ class Lexicon
 
     static constexpr uint8_t COLON_NO_DOT = 0b11; 
     static constexpr uint8_t COLON_DOT = 0b111; 
-    static constexpr uint8_t COLON_BOTTOM = 0b1; 
-    static constexpr uint8_t COLON_BOTTOM_DOT = 0b101; 
+    static constexpr uint8_t COLON_BOTTOM = 0b10; 
+    static constexpr uint8_t COLON_BOTTOM_DOT = 0b110; 
+    static constexpr uint8_t COLON_TOP = 0b1; 
+    static constexpr uint8_t COLON_TOP_DOT = 0b101; 
 
     static constexpr uint8_t convert_char(char input) {
         if (std::isalpha(input))

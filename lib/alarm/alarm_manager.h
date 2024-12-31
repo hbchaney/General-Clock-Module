@@ -1,3 +1,4 @@
+#pragma once
 #include "clock_time.h"
 #include "eeprom_M24C02.h"
 
@@ -12,6 +13,9 @@ struct AlarmTime
     bool on;
 
     AlarmTime() = default; 
+
+    utilities::ClockTime to_clock_time(); 
+    void set_from_clktime(const utilities::ClockTime& time_in); 
     bool compare_time(const utilities::ClockTime& time_in) const; 
 }; 
 
@@ -27,8 +31,11 @@ class AlarmManager
     bool check_alarm(const utilities::ClockTime& time_in); 
 
     int get_alarm_index() const; 
+    void set_alarm_index(int ind); 
     void next_alarm(); 
-    void set_alarm(const AlarmTime& time_in); 
+    void previous_alarm(); 
+    void save_alarm(); 
+    AlarmTime& get_current_alarm(); 
 
     private:
 
@@ -39,11 +46,8 @@ class AlarmManager
     uint8_t store_addr;
     eeprom::EEPromM24C02& eeprom_ref;  
 
-    AlarmTime alarm_0; 
-    AlarmTime alarm_1; 
-    AlarmTime alarm_2; 
-
-    int current_time = 0; 
-    std::vector<AlarmTime*> times;  
+    int current_time = 0;   
+    AlarmTime times[3]; 
 }; 
+
 } //eof alarm 

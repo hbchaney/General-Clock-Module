@@ -26,6 +26,8 @@ void TimeSet::process_input(input::ClockInput in)
         case input::ClockInput::DEC: 
             process_dec(); 
             break; 
+        case input::ClockInput::RIGHT_PRESS: 
+            
         default: 
             break; 
     }
@@ -45,10 +47,10 @@ void TimeSet::exit_mode()
 
 void TimeSet::enter_mode() 
 {
-    rtc_ref.refresh_time(); //make sure it has the most recent time before starting
+    rtc_ref.refresh_time(); //make sure it has the most recent time before starting  
+    disp.set_blink(0b0011, true);
+    current_mode = current_set_mode::HOURS;
     update_disp();  
-    disp.set_blink(0b0001); 
-    current_mode = current_set_mode::HOURS; 
 }
 
 void TimeSet::process_select() 
@@ -68,23 +70,24 @@ void TimeSet::process_select()
     switch (current_mode)
     {
         case current_set_mode::HOURS: 
-            disp.set_blink(0b0001); 
-            break; 
-        case current_set_mode::MINS: 
-            disp.set_blink(0b0010); 
-            break; 
-        case current_set_mode::YEAR:  
             disp.set_blink(0b0011); 
             break; 
+        case current_set_mode::MINS: 
+            disp.set_blink(0b1100); 
+            break; 
+        case current_set_mode::YEAR:  
+            disp.set_blink(0b1111); 
+            break; 
         case current_set_mode::MONTHS: 
-            disp.set_blink(0b0100); 
+            disp.set_blink(0b110000); 
             break; 
         case current_set_mode::DAYS: 
-            disp.set_blink(0b1000); 
+            disp.set_blink(0b11000000); 
             break; 
         default: 
             LOG_ERROR("current mode set to unknown"); 
     }
+    update_disp(); 
 }
 
 void TimeSet::process_inc() 
@@ -98,6 +101,7 @@ void TimeSet::process_inc()
             time_ref.add_time(0,1); 
             break; 
         case current_set_mode::YEAR: 
+            LOG_INFO("Year : " , time_ref.get_year()); 
             time_ref.add_date(0,0,1); 
             break; 
         case current_set_mode::MONTHS: 
@@ -150,6 +154,14 @@ void TimeSet::update_disp()
         vals.bottom.set_left(time_ref.get_months()); 
         vals.bottom.set_right(time_ref.get_days()); 
         vals.bottom.set_colon(display::Lexicon::COLON_BOTTOM); 
+        if (!time_ref.is_am()) 
+        {
+            vals.top.set_dots(0b1000); 
+        }
+        else 
+        {
+            vals.top.set_dots(0b0); 
+        }
     }
     else 
     {

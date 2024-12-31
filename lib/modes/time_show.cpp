@@ -5,16 +5,25 @@ using namespace clock_mode;
 
 TimeShow::TimeShow(display::DisplayManager& disp_in, 
             utilities::ClockTime& time_in, 
-            rtc::RTCDS3231& rtc_in) : 
+            rtc::RTCDS3231& rtc_in, 
+            SequenceBuzzer& buzz) : 
     base_utilities::Mode<input::ClockInput, ModeIndex>{ModeIndex::TimeShow},
     disp{disp_in},
     time_ref{time_in},
-    rtc_ref{rtc_in}
+    rtc_ref{rtc_in}, 
+    buzzie{buzz}
 {}
 
 void TimeShow::process_input(input::ClockInput in)
 {
-    //does nothing for now
+    //toggle between military time
+    if (in == input::ClockInput::RIGHT_PRESS) 
+    {
+        time_ref.enable_military(!time_ref.is_military()); //toggle the current military settings
+        buzzie.pulse(50, 200);
+        update_disp(); 
+        LOG_INFO("mil toggle"); 
+    }
 }
 
 void TimeShow::tick()
@@ -49,4 +58,12 @@ void TimeShow::update_disp()
     vals.bottom.set_left(time_ref.get_months()); 
     vals.bottom.set_right(time_ref.get_days()); 
     vals.bottom.set_colon(display::Lexicon::COLON_BOTTOM); 
+    if (!time_ref.is_am()) 
+    {
+        vals.top.set_dots(0b1000); 
+    }
+    else 
+    {
+        vals.top.set_dots(0b0); 
+    }
 }

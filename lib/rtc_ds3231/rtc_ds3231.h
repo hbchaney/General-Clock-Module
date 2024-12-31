@@ -10,6 +10,7 @@ namespace rtc
 class RTCDS3231 
 {
     public:
+    RTCDS3231(const RTCDS3231&) = delete; 
     RTCDS3231(TwoWire& in_wire_ref, utilities::ClockTime& in_time); 
     void init(); //calls the begin function of the wire
 

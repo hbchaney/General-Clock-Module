@@ -46,13 +46,13 @@ Lexicon& Lexicon::operator=(const std::array<char,4>& in)
 //all non zero padded except for base digit
 Lexicon& Lexicon::operator=(const uint16_t in)
 {
-    num_chars[0].n = in % 10; 
-    num_chars[1].n = (in / 10) % 10; 
-    num_chars[2].n = (in / 100) % 10;
-    num_chars[3].n = (in / 1000) % 10; 
+    num_chars[3].n = in % 10; 
+    num_chars[2].n = (in / 10) % 10; 
+    num_chars[1].n = (in / 100) % 10;
+    num_chars[0].n = (in / 1000) % 10; 
     
     //remove zero padding
-    for (uint8_t ind = num_chars.size() -1; ind >=1; ind--)
+    for (uint8_t ind = 0; ind < 3;  ind++)
     {
         if (!num_chars[ind].n)
         {
@@ -107,7 +107,7 @@ uint8_t Lexicon::get_brightness(uint8_t field) const
 
 void Lexicon::set_on(uint8_t on)
 {
-    on_status = 0 & 0x1f; 
+    on_status = on & 0x1f; 
 }
 
 uint8_t Lexicon::get_mapped_output(uint8_t ind) const
@@ -130,21 +130,37 @@ void Lexicon::set_types(uint8_t type)
 
 void Lexicon::set_left(uint8_t num, bool zero_pad)
 {
-    uint8_t ten = (num / 10) % 10; 
-    num_chars[3].n = ten ? ten : SPACE; 
-    num_chars[2].n = num % 10; 
-    dot_type_map |= 0b1100; 
+    uint8_t r_val = num % 10; 
+    uint8_t l_val = (num % 100) / 10;
+    if (!l_val && !zero_pad)
+    {
+        l_val = SPACE; 
+    } 
+    num_chars[0].n = l_val; 
+    num_chars[1].n = r_val; 
+    dot_type_map |= 0b0011; 
 }
 
 void Lexicon::set_right(uint8_t num, bool zero_pad)
 {
-    uint8_t ten = (num / 10) % 10; 
-    num_chars[1].n = ten ? ten : SPACE; 
-    num_chars[0].n = num % 10; 
-    dot_type_map |= 0b11; 
+    uint8_t r_val = num % 10; 
+    uint8_t l_val = (num % 100) / 10;
+    if (!l_val && !zero_pad)
+    {
+        l_val = SPACE; 
+    } 
+    num_chars[2].n = l_val; 
+    num_chars[3].n = r_val; 
+    dot_type_map |= 0b1100; 
+
 }
 
 uint8_t Lexicon::get_colon() const 
 {
     return colon_map; 
+}
+
+void Lexicon::set_brightness(uint8_t val)
+{
+    brightness = val; 
 }

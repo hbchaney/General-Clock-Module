@@ -7,6 +7,7 @@
 class SequenceBuzzer : base_utilities::UpdateBase
 {
     public: 
+    SequenceBuzzer(const SequenceBuzzer&) = delete; 
     SequenceBuzzer(uint8_t in_pin_no, 
     const std::vector<ulong>& sequence, 
     uint8_t in_buzzer_vol); 

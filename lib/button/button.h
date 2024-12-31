@@ -12,6 +12,8 @@ class Button : base_utilities::UpdateBase
 { 
     public: 
 
+    Button(const Button&) = delete; 
+    Button() = delete; 
     Button(uint8_t,unsigned long); 
 
     void init(); 

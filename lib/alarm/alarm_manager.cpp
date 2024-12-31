@@ -4,13 +4,8 @@ using namespace alarm;
 
 AlarmManager::AlarmManager(eeprom::EEPromM24C02& eeprom, uint8_t store_start) : 
 eeprom_ref{eeprom}, 
-store_addr{store_start}, 
-times(3) 
-{
-    times.push_back(&alarm_0); 
-    times.push_back(&alarm_1); 
-    times.push_back(&alarm_2); 
-}
+store_addr{store_start}
+{}
 
 void AlarmManager::init() 
 {
@@ -19,9 +14,9 @@ void AlarmManager::init()
 
 bool AlarmManager::check_alarm(const utilities::ClockTime& time_in)
 {
-    for (int i = 0; i < times.size(); i++)
+    for (int i = 0; i < std::size(times); i++)
     {
-        if (times[i]->on && times[i]->compare_time(time_in))
+        if (times[i].on && times[i].compare_time(time_in))
         {
             return true; 
         }
@@ -36,13 +31,19 @@ int AlarmManager::get_alarm_index() const
 
 void AlarmManager::next_alarm() 
 {
-    current_time = (current_time + 1) % times.size(); 
+    current_time = (current_time + 1) % std::size(times); 
 }
 
-void AlarmManager::set_alarm(const AlarmTime& time_in) 
+void AlarmManager::previous_alarm() 
 {
-    auto& t = *times[current_time]; 
-    t = time_in; 
+    current_time = (current_time - 1) >= 0 ? current_time - 1 : 0;  
+}
+
+void AlarmManager::save_alarm() 
+{
+    //add check to see if changed before changing ? 
+
+    auto& t = times[current_time]; 
     uint8_t ser_out[2]; 
     ser_out[0] = t.mins; 
     ser_out[1] = (t.on & 0x80) | (t.am & 0x40) | (t.mins & 0xf); 
@@ -51,14 +52,28 @@ void AlarmManager::set_alarm(const AlarmTime& time_in)
 
 void AlarmManager::read_from_eeprom()
 {
-    for (int i = 0; i < times.size(); i++)
+    for (int i = 0; i < std::size(times); i++)
     {
-        auto& t = *times[i]; 
+        auto& t = times[i]; 
         uint8_t data[2]; 
         eeprom_ref.read_bytes(store_addr + (i * 2), data, 2); 
         t.mins = data[0]; 
         t.hours = data[1] & 0xf; 
         t.on = data[1] & 0x80; 
         t.am = data[1] & 0x40; 
+    }
+}
+
+AlarmTime& AlarmManager::get_current_alarm() 
+{
+    return times[current_time]; 
+}
+
+void AlarmManager::set_alarm_index(int ind)
+{
+    //stop potential undefined crashing behaviour just in case
+    if (ind >= std::size(times))
+    {
+        ind = std::size(times) - 1; 
     }
 }

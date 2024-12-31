@@ -7,19 +7,24 @@ ModeManager::ModeManager(display::DisplayManager& disp_in,
                 utilities::ClockTime& time_in, 
                 rtc::RTCDS3231& rtc_in, 
                 SequenceBuzzer& buzzie_in, 
-                input::InputManager& input_manager_in) : 
+                input::InputManager& input_manager_in, 
+                eeprom::EEPromM24C02& eeprom_in) : 
 disp{disp_in},
 time{time_in},
 rtc{rtc_in},
 buzzie{buzzie_in},
 input_manager{input_manager_in}, 
-time_show{disp,time,rtc},
+eeprom_dev{eeprom_in},
+alarm_manager{eeprom_dev, STORAGE_START_ADDRESS},
+time_show{disp,time,rtc, buzzie_in},
 time_set{disp,time,rtc}, 
-mode_index_loop{ModeIndex::TimeShow, ModeIndex::TimeSet}
+alarm_set{alarm_manager, disp_in, time},
+mode_index_loop{ModeIndex::TimeShow, ModeIndex::TimeSet, ModeIndex::AlarmSet}
 {
     //create the mode
     mode_map[ModeIndex::TimeShow] = &time_show; 
     mode_map[ModeIndex::TimeSet] = &time_set; 
+    mode_map[ModeIndex::AlarmSet] = &alarm_set; 
     current_mode = &time_show; 
 
 }
@@ -30,11 +35,12 @@ void ModeManager::update()
     if (out == input::ClockInput::LEFT_PRESS)
     {
         rotate_mode(); 
-        buzzie.pulse(15, 150); 
+        buzzie.pulse(50, 200); 
     }
     else if (out != input::ClockInput::NONE) 
     {
         current_mode->process_input(out); 
+        LOG_INFO("input entered : ", static_cast<int>(out)); 
     }
     else 
     {
@@ -44,6 +50,7 @@ void ModeManager::update()
 
 void ModeManager::init() 
 {
+    rtc.init(); 
     current_mode = &time_show; 
     current_mode->enter_mode(); 
 }
@@ -62,5 +69,7 @@ void ModeManager::rotate_mode()
 
 void ModeManager::switch_mode(ModeIndex ind)
 {
-
+    current_mode->exit_mode(); 
+    current_mode = mode_map.at(ind); 
+    current_mode->enter_mode(); 
 }

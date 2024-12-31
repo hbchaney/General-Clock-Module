@@ -49,7 +49,7 @@ void TwoSegDisplay::display_lex(const Lexicon& top, const Lexicon& bot)
     set_digit(SEGMENT_MAP::DIGIT_TWO, true, top.get_mapped_output(1), top.get_brightness(1)); 
     set_digit(SEGMENT_MAP::DIGIT_THREE, true, top.get_mapped_output(2), top.get_brightness(2)); 
     set_digit(SEGMENT_MAP::DIGIT_FOUR, true, top.get_mapped_output(3), top.get_brightness(3)); 
-    set_digit(SEGMENT_MAP::COLON, true, top.get_colon(), top.get_brightness(Lexicon::COLON_BRIGHTNESS)); 
+    set_digit(SEGMENT_MAP::COLON, true, top.get_colon(), top.get_brightness(0)); 
 
     set_digit(SEGMENT_MAP::DIGIT_ONE, false, bot.get_mapped_output(0), bot.get_brightness(0)); 
     set_digit(SEGMENT_MAP::DIGIT_TWO, false, bot.get_mapped_output(1), bot.get_brightness(1)); 

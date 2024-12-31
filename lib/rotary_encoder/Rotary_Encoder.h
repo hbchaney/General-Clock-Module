@@ -35,7 +35,7 @@ class RotaryEncoder : public base_utilities::UpdateBase {
 
 
 };
- 
+
 #endif
 
 

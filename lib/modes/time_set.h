@@ -41,14 +41,13 @@ class TimeSet : public base_utilities::Mode<input::ClockInput, ModeIndex>
     private: 
     void process_select(); 
     void process_inc();
-    void process_dec(); 
-    void update_display(); 
+    void process_dec();  
 
     void update_disp(); 
 
     display::DisplayManager& disp; 
     utilities::ClockTime& time_ref; 
-    rtc::RTCDS3231 rtc_ref; 
+    rtc::RTCDS3231& rtc_ref; 
     current_set_mode current_mode; 
 
 }; 

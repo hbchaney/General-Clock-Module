@@ -208,6 +208,7 @@ uint8_t ClockTime::get_months() const { return month; }
 uint16_t ClockTime::get_year() const {return year; }
 
 bool ClockTime::is_am() const {return am; } 
+bool ClockTime::is_military() const {return military_time; }; 
 
 bool ClockTime::set_time(uint8_t in_hours, uint8_t in_min, bool is_am, uint8_t in_day, uint8_t in_month, uint16_t in_year)
 {

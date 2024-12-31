@@ -158,6 +158,7 @@ utilities::ClockTime RTCDS3231::get_time()
     year = ((year & 0xf0) >> 4) * 10 + (year & 0xf); 
 
     rad_time.set_time(hours, mins, is_am, date, month, static_cast<uint16_t>(year) + 2000); 
+    rad_time.enable_military(radio_time_ref.is_military()); 
     return rad_time; 
 }
 

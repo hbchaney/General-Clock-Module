@@ -10,6 +10,7 @@ namespace eeprom
     {
         public: 
 
+        EEPromM24C02(const EEPromM24C02&) = delete; 
         EEPromM24C02(uint8_t in_E0, uint8_t in_E1, uint8_t in_E2, uint8_t wb_pin, TwoWire& Wire); 
         void init();  
 
