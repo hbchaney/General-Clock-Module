@@ -20,6 +20,17 @@ uint8_t WireHelper::scan_for_first_address()
     return 0; 
 }
 
+void WireHelper::print_all_present() 
+{
+    for (uint8_t i = 0; i < 128; i++)
+    {
+        if (scan_address(i))
+        {
+            LOG_INFO("address found at 0x", DebugLogBase::HEX, static_cast<int>(i) ); 
+        }
+    }
+}
+
 bool WireHelper::scan_address(uint8_t address)
 {
     wire_ref.begin(); 

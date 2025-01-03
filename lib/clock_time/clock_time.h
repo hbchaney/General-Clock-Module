@@ -32,7 +32,7 @@ class ClockTime
     //getters 
     uint8_t get_mins() const; 
     uint8_t get_hours() const; //grabs whatever mode is true
-    uint8_t get_hours(bool military); //specify the time mode (rtc needs non military)
+    uint8_t get_hours(bool military) const; //specify the time mode (rtc needs non military)
     uint8_t get_days() const; 
     uint8_t get_months() const; 
     uint16_t get_year() const; 

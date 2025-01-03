@@ -47,10 +47,10 @@ class AlarmSet : public base_utilities::Mode<input::ClockInput, ModeIndex>
     utilities::ClockTime working_time; //used to set alarm time 
 
     static constexpr uint8_t blnk_seq[] {
-        0b1100, 
         0b0011, 
-        0b11000000, 
-        0b110000
+        0b1100, 
+        0b110000, 
+        0b11000000
     }; 
 }; 
 

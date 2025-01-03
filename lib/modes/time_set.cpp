@@ -27,7 +27,8 @@ void TimeSet::process_input(input::ClockInput in)
             process_dec(); 
             break; 
         case input::ClockInput::RIGHT_PRESS: 
-            
+            time_ref.enable_military(!time_ref.is_military()); 
+            break; 
         default: 
             break; 
     }

@@ -17,6 +17,7 @@ struct AlarmTime
     utilities::ClockTime to_clock_time(); 
     void set_from_clktime(const utilities::ClockTime& time_in); 
     bool compare_time(const utilities::ClockTime& time_in) const; 
+    void print_time() const; 
 }; 
 
 class AlarmManager
@@ -28,7 +29,7 @@ class AlarmManager
     void init(); 
 
     //returns true if alarm is triggered
-    bool check_alarm(const utilities::ClockTime& time_in); 
+    bool check_alarm(const utilities::ClockTime& time_in) const; 
 
     int get_alarm_index() const; 
     void set_alarm_index(int ind); 
@@ -36,6 +37,9 @@ class AlarmManager
     void previous_alarm(); 
     void save_alarm(); 
     AlarmTime& get_current_alarm(); 
+
+    //print util 
+    void print_saved(); 
 
     private:
 

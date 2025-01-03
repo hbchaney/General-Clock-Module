@@ -32,15 +32,15 @@ class ModeManager : base_utilities::UpdateBase
 
     void switch_mode(ModeIndex ind); //mode index call back 
 
-
+    eeprom::EEPromM24C02& eeprom_dev; 
+    alarm::AlarmManager alarm_manager; 
     display::DisplayManager& disp; 
     utilities::ClockTime& time;
     rtc::RTCDS3231& rtc; 
     SequenceBuzzer& buzzie; 
     input::InputManager& input_manager; 
-    eeprom::EEPromM24C02& eeprom_dev; 
 
-    alarm::AlarmManager alarm_manager; 
+    
 
     TimeShow time_show; 
     TimeSet time_set;  

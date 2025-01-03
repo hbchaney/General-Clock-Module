@@ -17,21 +17,22 @@ input::InputManager man{
     9,10,0,1,4
 }; 
 
-
+eeprom::EEPromM24C02 prom{15, Wire}; 
 display::DisplayManager disp{Wire1};  
 utilities::ClockTime clk_time{1, 1, 1, 1, 1, 2021}; 
 rtc::RTCDS3231 rtc_dev{Wire, clk_time}; 
 SequenceBuzzer buzzie{
-    26, {100,200,200,100}, 150
+    26, {75,40,75,400}, 200
 }; 
 clock_mode::ModeManager manager {
-    disp, clk_time, rtc_dev, buzzie, man
+    disp, clk_time, rtc_dev, buzzie, man, prom
 }; 
 
 
 void setup() 
 { 
     rtc_dev.init(); //should probably put this in the mode managers init
+    prom.init(); 
     base_utilities::UpdateBase::run_inits();  
 
 }

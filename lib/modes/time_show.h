@@ -18,7 +18,8 @@ class TimeShow : public base_utilities::Mode<input::ClockInput, ModeIndex>
     TimeShow(display::DisplayManager& disp_in, 
             utilities::ClockTime& time_in, 
             rtc::RTCDS3231& rtc_in, 
-            SequenceBuzzer& buzz);
+            SequenceBuzzer& buzz, 
+            const alarm::AlarmManager& al_man);
 
     void process_input(input::ClockInput in) override; 
     void tick() override; 
@@ -33,9 +34,15 @@ class TimeShow : public base_utilities::Mode<input::ClockInput, ModeIndex>
     utilities::ClockTime& time_ref; 
     rtc::RTCDS3231& rtc_ref; 
     SequenceBuzzer& buzzie; 
+    const alarm::AlarmManager& al_ref; 
 
     uint32_t last_update = 0; 
     uint32_t update_freq = 1000; //check for updates every 100 millis
+    uint8_t last_min = 0; 
+
+    ulong al_start = 0; 
+    static constexpr ulong AL_TIMEOUT =  15000;
+    bool al_trig;  
 
 }; 
 

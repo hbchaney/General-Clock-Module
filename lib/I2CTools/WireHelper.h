@@ -12,6 +12,7 @@ class WireHelper
 
     //scans for the first availiable address
     uint8_t scan_for_first_address(); 
+    void print_all_present();
 
 
     bool scan_address(uint8_t address); 

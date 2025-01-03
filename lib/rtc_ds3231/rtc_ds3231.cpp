@@ -31,7 +31,6 @@ bool RTCDS3231::set_time(uint8_t hours, uint8_t mins, bool is_am, uint8_t day, u
     uint8_t day_out = (day / 10) << 4 | (day % 10); 
     uint8_t month_out = (month / 10) << 4 | (month % 10);  
     uint8_t year_out = ((year / 10) % 100) << 4 | (year % 10);  
-    LOG_INFO("year being saved : ", year_out); 
 
 
     uint8_t mins_out = min_single | (min_tenths << 4); 
@@ -93,7 +92,7 @@ utilities::ClockTime RTCDS3231::get_time()
     {
         LOG_ERROR("get time had error : ", response); 
     }   
-    wire_ref.requestFrom(I2C_ADDRESS,6); //requesting two bytes (mins then hours) 
+    wire_ref.requestFrom(I2C_ADDRESS,6); //requesting 6 bytes
     uint8_t ret_bytes[6]; 
     if (wire_ref.readBytes(ret_bytes,6) != 6)
     {

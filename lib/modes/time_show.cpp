@@ -6,12 +6,14 @@ using namespace clock_mode;
 TimeShow::TimeShow(display::DisplayManager& disp_in, 
             utilities::ClockTime& time_in, 
             rtc::RTCDS3231& rtc_in, 
-            SequenceBuzzer& buzz) : 
+            SequenceBuzzer& buzz, 
+            const alarm::AlarmManager& al_man) : 
     base_utilities::Mode<input::ClockInput, ModeIndex>{ModeIndex::TimeShow},
     disp{disp_in},
     time_ref{time_in},
     rtc_ref{rtc_in}, 
-    buzzie{buzz}
+    buzzie{buzz}, 
+    al_ref{al_man}
 {}
 
 void TimeShow::process_input(input::ClockInput in)
@@ -24,6 +26,14 @@ void TimeShow::process_input(input::ClockInput in)
         update_disp(); 
         LOG_INFO("mil toggle"); 
     }
+    else if (in == input::ClockInput::ROT_PRESS)
+    {
+        if (al_trig)
+        {
+            al_trig = false; 
+            buzzie.stop_buzzing(); 
+        }
+    }
 }
 
 void TimeShow::tick()
@@ -33,6 +43,23 @@ void TimeShow::tick()
         last_update = millis(); 
         rtc_ref.refresh_time(); 
         update_disp();  
+        if (last_min != time_ref.get_mins())
+        {
+            last_min = time_ref.get_mins(); 
+            //check for alarm 
+            if (al_ref.check_alarm(time_ref))
+            {
+                buzzie.start_buzzing(); 
+                al_trig = true; 
+                al_start = millis(); 
+            }
+        }
+    }
+
+    if (al_trig && al_start + AL_TIMEOUT < millis())
+    {
+        al_trig = false; 
+        buzzie.stop_buzzing(); 
     }
 }
 
@@ -46,7 +73,9 @@ void TimeShow::enter_mode()
 
 void TimeShow::exit_mode() 
 {
-    //also does nothing for now
+    //stop buzzing if buzzing 
+    al_trig = false; 
+    buzzie.stop_buzzing(); 
 }
 
 void TimeShow::update_disp()

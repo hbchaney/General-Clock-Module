@@ -60,7 +60,8 @@ void AlarmSet::enter_mode()
 void AlarmSet::exit_mode() 
 {
     //save the current alarm setting 
-    alarm_manager.save_alarm(); 
+    alarm_manager.get_current_alarm().set_from_clktime(working_time);
+    alarm_manager.save_alarm();  
 }
 
 void AlarmSet::tick() {} //NOOP for now 
@@ -72,6 +73,7 @@ void AlarmSet::update_disp()
     auto& [top, bottom] = disp_manager.get_values(); 
     top.set('a', 0); 
     top.set(static_cast<uint8_t>(alarm_manager.get_alarm_index()), 1); 
+    top.set_dots(0); 
 
     if (alarm_manager.get_current_alarm().on)
     {
@@ -87,7 +89,7 @@ void AlarmSet::update_disp()
     top.set_colon(display::Lexicon::COLON_BOTTOM); 
 
     bottom.set_left(working_time.get_hours()); 
-    bottom.set_right(working_time.get_mins()); 
+    bottom.set_right(working_time.get_mins(), true); 
     bottom.set_colon(display::Lexicon::COLON_NO_DOT); 
     if (working_time.is_am())
     {
@@ -104,6 +106,7 @@ void AlarmSet::process_num_select(input::ClockInput in)
     if (in == input::ClockInput::INC)
     {
         alarm_manager.get_current_alarm().set_from_clktime(working_time); 
+        alarm_manager.get_current_alarm().print_time(); 
         alarm_manager.save_alarm(); 
         alarm_manager.next_alarm(); 
         working_time = alarm_manager.get_current_alarm().to_clock_time(); 
@@ -117,6 +120,7 @@ void AlarmSet::process_num_select(input::ClockInput in)
         working_time = alarm_manager.get_current_alarm().to_clock_time(); 
         working_time.enable_military(clk_time_ref.is_military()); 
     }
+    update_disp(); 
 }
 
 void AlarmSet::process_on_off_select(input::ClockInput in) 

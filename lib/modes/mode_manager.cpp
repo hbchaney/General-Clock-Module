@@ -9,14 +9,14 @@ ModeManager::ModeManager(display::DisplayManager& disp_in,
                 SequenceBuzzer& buzzie_in, 
                 input::InputManager& input_manager_in, 
                 eeprom::EEPromM24C02& eeprom_in) : 
+eeprom_dev{eeprom_in},
+alarm_manager{eeprom_dev, STORAGE_START_ADDRESS},
 disp{disp_in},
 time{time_in},
 rtc{rtc_in},
 buzzie{buzzie_in},
-input_manager{input_manager_in}, 
-eeprom_dev{eeprom_in},
-alarm_manager{eeprom_dev, STORAGE_START_ADDRESS},
-time_show{disp,time,rtc, buzzie_in},
+input_manager{input_manager_in},
+time_show{disp,time,rtc, buzzie_in, alarm_manager},
 time_set{disp,time,rtc}, 
 alarm_set{alarm_manager, disp_in, time},
 mode_index_loop{ModeIndex::TimeShow, ModeIndex::TimeSet, ModeIndex::AlarmSet}
@@ -40,7 +40,6 @@ void ModeManager::update()
     else if (out != input::ClockInput::NONE) 
     {
         current_mode->process_input(out); 
-        LOG_INFO("input entered : ", static_cast<int>(out)); 
     }
     else 
     {
@@ -53,6 +52,7 @@ void ModeManager::init()
     rtc.init(); 
     current_mode = &time_show; 
     current_mode->enter_mode(); 
+    alarm_manager.init(); 
 }
 
 void ModeManager::rotate_mode()

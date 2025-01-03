@@ -32,7 +32,7 @@ ClockTime::ClockTime(uint8_t in_hours,
     {
         LOG_ERROR("time at init was invalid"); 
         minutes = 0; 
-        hours = 0; 
+        hours = 1; 
     }
     if (day > 32 || month > 12)
     {
@@ -198,7 +198,7 @@ uint8_t ClockTime::get_hours() const
     return military_time ? convert_to_military(hours, am) : hours;  
 }
 
-uint8_t ClockTime::get_hours(bool military)
+uint8_t ClockTime::get_hours(bool military) const
 {
     return military ? convert_to_military(hours, am) : hours; 
 }
